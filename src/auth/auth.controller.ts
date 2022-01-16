@@ -1,15 +1,16 @@
-import { Body, Controller, Delete, Get, Patch, Post, Req, Res, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, Res, UseGuards, UsePipes } from "@nestjs/common";
 import { Response } from "express";
+import { User } from "@prisma/client";
 
 import { SignupDto } from "./dto/signup.dto";
 import { AuthService } from "./auth.service";
-import { ReqWithUser } from "../types/reqWithUser.interface";
 import { LocalAuthGuard } from "./guards/local.guard";
 import { JwtAuthGuard } from "./guards/jwt.guard";
 import { RefreshAuthGuard } from "./guards/refresh.guard";
 import { ForgotPasswordDto } from "./dto/forgotPassword.dto";
 import { ResetPasswordDto } from "./dto/resetPassword.dto";
 import { ValidMailPipe } from "../pipes/validMail.pipe";
+import { GetUser } from "../decorators/getUser.decorator";
 
 @Controller("auth")
 export class AuthController {
@@ -25,26 +26,26 @@ export class AuthController {
 
   @Post("/login")
   @UseGuards(LocalAuthGuard)
-  async login(@Req() req: ReqWithUser, @Res({ passthrough: true }) res: Response) {
-    const { refreshTokenCookie, accessTokenCookie, user } = await this.authService.login(req.user);
+  async login(@GetUser() user: User, @Res({ passthrough: true }) res: Response) {
+    const { refreshTokenCookie, accessTokenCookie } = await this.authService.login(user);
     res.setHeader("Set-Cookie", [refreshTokenCookie, accessTokenCookie]);
     return user;
   }
 
   @Get("/refresh")
   @UseGuards(RefreshAuthGuard)
-  async refresh(@Req() req: ReqWithUser, @Res({ passthrough: true }) res: Response) {
-    const { accessTokenCookie } = await this.authService.refresh(req?.user?.id);
+  async refresh(@GetUser() user: User, @Res({ passthrough: true }) res: Response) {
+    const { accessTokenCookie } = await this.authService.refresh(user.id);
     res.setHeader("Set-Cookie", accessTokenCookie);
-    return req?.user;
+    return user;
   }
 
   @Post("/logout")
   @UseGuards(JwtAuthGuard)
-  async logout(@Req() req: ReqWithUser, @Res({ passthrough: true }) res: Response) {
-    const cookies = await this.authService.logout(req?.user.id);
+  async logout(@GetUser() user: User, @Res({ passthrough: true }) res: Response) {
+    const cookies = await this.authService.logout(user.id);
     res.setHeader("Set-Cookie", cookies);
-    return req?.user;
+    return user;
   }
 
   @Post("/forgot-password")
@@ -59,13 +60,13 @@ export class AuthController {
 
   @Delete("/account")
   @UseGuards(JwtAuthGuard)
-  deleteAccount(@Req() req: ReqWithUser) {
-    return this.authService.deleteAccount(req?.user.id);
+  deleteAccount(@GetUser() user: User) {
+    return this.authService.deleteAccount(user.id);
   }
 
   @Get("/me")
   @UseGuards(JwtAuthGuard)
-  me(@Req() req: ReqWithUser) {
-    return req?.user;
+  me(@GetUser() user: User) {
+    return user;
   }
 }

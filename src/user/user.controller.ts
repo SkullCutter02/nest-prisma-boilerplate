@@ -1,9 +1,10 @@
-import { Body, Controller, Patch, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Patch, UseGuards } from "@nestjs/common";
+import { User } from "@prisma/client";
 
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "../auth/guards/jwt.guard";
-import { ReqWithUser } from "../types/reqWithUser.interface";
 import { ChangeUserDetailsDto } from "./dto/changeUserDetails.dto";
+import { GetUser } from "../decorators/getUser.decorator";
 
 @Controller("user")
 export class UserController {
@@ -11,7 +12,7 @@ export class UserController {
 
   @Patch()
   @UseGuards(JwtAuthGuard)
-  changeUserDetails(@Req() req: ReqWithUser, @Body() changeUserDetailsDto: ChangeUserDetailsDto) {
-    return this.userService.setDetails(req?.user.id, changeUserDetailsDto);
+  changeUserDetails(@GetUser() user: User, @Body() changeUserDetailsDto: ChangeUserDetailsDto) {
+    return this.userService.setDetails(user.id, changeUserDetailsDto);
   }
 }
