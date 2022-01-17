@@ -1,4 +1,5 @@
 import { IsEmail, IsString, Matches } from "class-validator";
+import { Transform } from "class-transformer";
 
 import { passwordRegex } from "../../constants/passwordRegex";
 
@@ -8,6 +9,7 @@ export class SignupDto {
 
   @IsString()
   @IsEmail()
+  @Transform(({ value }) => value.toLowerCase())
   email: string;
 
   @IsString()

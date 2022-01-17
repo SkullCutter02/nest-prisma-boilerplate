@@ -1,4 +1,5 @@
 import { IsEmail, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class ChangeUserDetailsDto {
   @IsString()
@@ -6,5 +7,6 @@ export class ChangeUserDetailsDto {
 
   @IsString()
   @IsEmail()
+  @Transform(({ value }) => value.toLowerCase())
   email: string;
 }
