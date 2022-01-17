@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { User } from "@prisma/client";
 
 import { PostService } from "./post.service";
@@ -34,5 +34,12 @@ export class PostController {
   @CheckOwnership({ of: "post" })
   editPost(@Param("id", ParseUUIDPipe) postId: string, @Body() editPostDto: PostDto) {
     return this.postService.editPost(editPostDto, postId);
+  }
+
+  @Delete("/:id")
+  @UseGuards(JwtAuthGuard, CheckOwnershipGuard)
+  @CheckOwnership({ of: "post" })
+  deletePost(@Param("id", ParseUUIDPipe) postId: string) {
+    return this.postService.deletePost(postId);
   }
 }
