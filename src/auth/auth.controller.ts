@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post, Res, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Patch, Post, Res, UseGuards } from "@nestjs/common";
 import { Response } from "express";
 import { User } from "@prisma/client";
 
@@ -9,7 +9,6 @@ import { JwtAuthGuard } from "./guards/jwt.guard";
 import { RefreshAuthGuard } from "./guards/refresh.guard";
 import { ForgotPasswordDto } from "./dto/forgotPassword.dto";
 import { ResetPasswordDto } from "./dto/resetPassword.dto";
-import { ValidMailPipe } from "../pipes/validMail.pipe";
 import { GetUser } from "../decorators/getUser.decorator";
 
 @Controller("auth")
@@ -17,7 +16,6 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("/signup")
-  @UsePipes(ValidMailPipe)
   async signup(@Body() signupDto: SignupDto, @Res({ passthrough: true }) res: Response) {
     const { refreshTokenCookie, accessTokenCookie, user } = await this.authService.signup(signupDto);
     res.setHeader("Set-Cookie", [refreshTokenCookie, accessTokenCookie]);
