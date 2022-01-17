@@ -1,11 +1,13 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { User } from "@prisma/client";
 
 import { PostService } from "./post.service";
-import { CreatePostDto } from "./dto/createPost.dto";
+import { PostDto } from "./dto/post.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 import { GetUser } from "../decorators/getUser.decorator";
 import { CursorPaginateDto } from "../shared/cursorPaginate.dto";
+import { CheckOwnership } from "../decorators/checkOwnership.decorator";
+import { CheckOwnershipGuard } from "../guards/checkOwnership.guard";
 
 @Controller("post")
 export class PostController {
@@ -23,7 +25,14 @@ export class PostController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  createPost(@Body() createPostDto: CreatePostDto, @GetUser() user: User) {
+  createPost(@Body() createPostDto: PostDto, @GetUser() user: User) {
     return this.postService.createPost(createPostDto, user);
+  }
+
+  @Patch("/:id")
+  @UseGuards(JwtAuthGuard, CheckOwnershipGuard)
+  @CheckOwnership({ of: "post" })
+  editPost(@Param("id", ParseUUIDPipe) postId: string, @Body() editPostDto: PostDto) {
+    return this.postService.editPost(editPostDto, postId);
   }
 }

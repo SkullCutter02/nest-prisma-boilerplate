@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, User } from "@prisma/client";
 
-import { CreatePostDto } from "./dto/createPost.dto";
+import { PostDto } from "./dto/post.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { CursorPaginateDto } from "../shared/cursorPaginate.dto";
 
@@ -14,7 +14,7 @@ export class PostService {
   }
 
   async getPosts(cursorPaginateDto?: CursorPaginateDto) {
-    if (!cursorPaginateDto) {
+    if (Object.keys(cursorPaginateDto).length === 0) {
       return this.prisma.post.findMany({ include: { user: true } });
     } else {
       const { limit, cursor, filter } = cursorPaginateDto;
@@ -29,6 +29,7 @@ export class PostService {
           },
         },
         orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+        include: { user: true },
       };
 
       const [posts, nextPage] = await this.prisma.$transaction([
@@ -39,7 +40,7 @@ export class PostService {
     }
   }
 
-  createPost(createPostDto: CreatePostDto, user: User) {
+  createPost(createPostDto: PostDto, user: User) {
     return this.prisma.post.create({
       data: {
         ...createPostDto,
@@ -50,6 +51,13 @@ export class PostService {
       include: {
         user: true,
       },
+    });
+  }
+
+  editPost(editPostDto: PostDto, postId: string) {
+    return this.prisma.post.update({
+      where: { id: postId },
+      data: editPostDto,
     });
   }
 }

@@ -3,8 +3,9 @@ import { Transform } from "class-transformer";
 
 export class CursorPaginateDto {
   @IsNumber()
+  @IsOptional()
   @Transform(({ value }) => parseInt(value))
-  limit: number;
+  limit?: number;
 
   @IsUUID()
   @IsOptional()
