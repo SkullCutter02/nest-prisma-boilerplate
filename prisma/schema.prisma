@@ -42,8 +42,8 @@ model Post {
   title String @db.VarChar(500)
   body String
 
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
   @@map("posts")
 }

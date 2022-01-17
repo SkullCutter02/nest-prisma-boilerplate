@@ -10,12 +10,12 @@ export class PostService {
   constructor(private readonly prisma: PrismaService) {}
 
   getPost(postId: string) {
-    return this.prisma.post.findUnique({ where: { id: postId }, include: { author: true } });
+    return this.prisma.post.findUnique({ where: { id: postId }, include: { user: true } });
   }
 
   async getPosts(cursorPaginateDto?: CursorPaginateDto) {
     if (!cursorPaginateDto) {
-      return this.prisma.post.findMany({ include: { author: true } });
+      return this.prisma.post.findMany({ include: { user: true } });
     } else {
       const { limit, cursor, filter } = cursorPaginateDto;
 
@@ -33,7 +33,7 @@ export class PostService {
 
       const [posts, nextPage] = await this.prisma.$transaction([
         this.prisma.post.findMany({ ...findManyInput, skip: cursor ? 1 : undefined }), // if cursor exists, skip 1
-        this.prisma.post.findMany({ ...findManyInput, skip: cursor ? limit + 1 : undefined }),
+        this.prisma.post.findMany({ ...findManyInput, skip: cursor ? limit + 1 : limit }),
       ]);
       return { data: posts, hasMore: nextPage.length !== 0 };
     }
@@ -43,12 +43,12 @@ export class PostService {
     return this.prisma.post.create({
       data: {
         ...createPostDto,
-        author: {
+        user: {
           connect: { id: user.id },
         },
       },
       include: {
-        author: true,
+        user: true,
       },
     });
   }
