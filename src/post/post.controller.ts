@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
 import { User } from "@prisma/client";
 
 import { PostService } from "./post.service";
@@ -9,6 +9,16 @@ import { GetUser } from "../decorators/getUser.decorator";
 @Controller("post")
 export class PostController {
   constructor(private readonly postService: PostService) {}
+
+  @Get("/:id")
+  getPost(@Param("id", ParseUUIDPipe) postId: string) {
+    return this.postService.getPost(postId);
+  }
+
+  @Get()
+  getPosts() {
+    return this.postService.getPosts();
+  }
 
   @Post()
   @UseGuards(JwtAuthGuard)
