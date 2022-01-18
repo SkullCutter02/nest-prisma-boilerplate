@@ -9,7 +9,6 @@ import { AuthModule } from "./auth/auth.module";
 import { MailModule } from "./mail/mail.module";
 import { RedisModule } from "./redis/redis.module";
 import { PrismaService } from "./prisma/prisma.service";
-import { PostModule } from "./post/post.module";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
@@ -20,7 +19,6 @@ import { PrismaModule } from "./prisma/prisma.module";
     MailModule,
     RedisModule,
     PrismaService,
-    PostModule,
     PrismaModule,
   ],
   controllers: [AppController],

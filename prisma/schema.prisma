@@ -20,7 +20,7 @@ model User {
   info Info @relation(fields: [infoId], references: [id], onDelete: Cascade)
   infoId String
 
-  posts Post[]
+//posts Post[]
 
   @@map("users")
 }
@@ -35,15 +35,15 @@ model Info {
 }
 
 // TODO: replace this model if needed
-model Post {
-  id String @default(uuid()) @id
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title String @db.VarChar(500)
-  body String
+//model Post {
+//  id String @default(uuid()) @id
+//  createdAt DateTime @default(now())
+//  updatedAt DateTime @updatedAt
+//  title String @db.VarChar(500)
+//  body String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+//  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//  userId String
 
-  @@map("posts")
-}
+//  @@map("posts")
+//}
