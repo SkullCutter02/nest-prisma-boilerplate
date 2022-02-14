@@ -84,4 +84,8 @@ Recommend switching to nest-casl: https://github.com/getjerry/nest-casl
 
 Docs are quite straightforward I believe. Make sure you define a Role enum in the prisma schema and that the user has a roles array
 
-Probably should delete the CheckOwnershipGuard as well as the CheckOwnershipDecorator from the guards and decorator folder respectively
+Example I made: https://github.com/SkullCutter02/nest-casl-example
+
+Make sure to use the prisma-class-generator generator to generate Prisma classes that can be used for CASL
+
+If this is used, delete the CheckOwnershipGuard as well as the CheckOwnershipDecorator from the guards and decorator folder respectively
