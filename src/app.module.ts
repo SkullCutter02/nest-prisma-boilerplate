@@ -8,19 +8,10 @@ import { UserModule } from "./user/user.module";
 import { AuthModule } from "./auth/auth.module";
 import { MailModule } from "./mail/mail.module";
 import { RedisModule } from "./redis/redis.module";
-import { PrismaService } from "./prisma/prisma.service";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(configModuleOptions),
-    UserModule,
-    AuthModule,
-    MailModule,
-    RedisModule,
-    PrismaService,
-    PrismaModule,
-  ],
+  imports: [ConfigModule.forRoot(configModuleOptions), UserModule, AuthModule, MailModule, RedisModule, PrismaModule],
   controllers: [AppController],
   providers: [AppService],
 })
