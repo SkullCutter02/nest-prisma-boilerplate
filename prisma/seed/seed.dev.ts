@@ -7,21 +7,21 @@ const prisma = new PrismaClient();
 
 async function runSeeders() {
   await Promise.all(
-    infos.map((info) =>
-      prisma.info.upsert({
-        where: { id: info.id },
-        update: {},
-        create: info,
-      })
-    )
-  );
-
-  await Promise.all(
     users.map((user) =>
       prisma.user.upsert({
         where: { id: user.id },
         update: {},
         create: user,
+      })
+    )
+  );
+
+  await Promise.all(
+    infos.map((info) =>
+      prisma.info.upsert({
+        where: { id: info.id },
+        update: {},
+        create: info,
       })
     )
   );

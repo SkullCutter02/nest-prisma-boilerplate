@@ -17,8 +17,7 @@ model User {
   name String
   email String @unique
 
-  info Info @relation(fields: [infoId], references: [id], onDelete: Cascade)
-  infoId String
+  info Info?
 
 //posts Post[]
 
@@ -26,8 +25,8 @@ model User {
 }
 
 model Info {
-  id String @default(uuid()) @id
-  user User?
+  id String @id
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
   hash String
   currentHashedRefreshToken String?
 
