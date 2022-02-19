@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import * as argon2 from "argon2";
 
 import { ChangeUserDetailsDto } from "./dto/changeUserDetails.dto";
@@ -9,21 +9,32 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   public async create(email: string, name: string, hash: string) {
-    const user = await this.findByEmail(email);
+    // const user = await this.findByEmail(email);
+    //
+    // if (!!user) throw new BadRequestException("User with such email already exists");
 
-    if (!!user) throw new BadRequestException("User with such email already exists");
-
-    return this.prisma.user.create({
-      data: {
-        name,
-        email,
-        info: {
-          create: {
-            hash,
+    const user = await this.prisma.user
+      .create({
+        data: {
+          name,
+          email,
+          info: {
+            create: {
+              hash,
+            },
           },
         },
-      },
-    });
+      })
+      .catch((err) => {
+        // code for unique constraint failure
+        if (err.code === "P2002" && err.meta.target.includes("email")) {
+          throw new BadRequestException("User with such email already exists");
+        } else {
+          throw new InternalServerErrorException();
+        }
+      });
+
+    if (user) return user;
   }
 
   public findById(userId: string, includeInfo = false) {
